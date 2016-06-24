@@ -1,6 +1,6 @@
-module MainWithoutPorts exposing (..)
+port module Main exposing (..)
 
-import Html exposing (Attribute, Html, audio, div, text)
+import Html exposing (Attribute, Html, audio, div)
 import Html.Attributes exposing (class, controls, type', src)
 import Html.App as App
 import Html.Events exposing (onClick)
@@ -110,5 +110,11 @@ view model =
             , onTimeUpdate TimeUpdate
             ]
             []
-        , div [] [ text ("CurrentTime: " ++ toString model.currentTime) ]
         ]
+
+
+
+-- PORT
+
+
+port setCurrentTime : Float -> Cmd msg

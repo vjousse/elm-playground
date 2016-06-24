@@ -91,6 +91,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ text "Coucou à tous hop" ]
+        [ h1 [] [ text "Audio player" ]
+        , div [] [ text ("Current time outside audio component: " ++ toString model.audioPlayer.currentTime) ]
         , App.map MsgAudioPlayer (AudioPlayer.view model.audioPlayer)
         ]

@@ -104,4 +104,5 @@ view model =
             , onTimeUpdate TimeUpdate
             ]
             []
+        , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
         ]

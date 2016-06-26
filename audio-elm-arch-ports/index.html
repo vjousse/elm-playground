@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Main</title>
+    </head>
+    <body>
+        <div id="elm"></div>
+        <script src="elm.js"></script>
+        <script>
+        var node = document.getElementById('elm');
+        var app = Elm.Main.embed(node);
+        app.ports.setCurrentTime.subscribe(function(time) {
+            var video = document.getElementById('video-player');
+            console.log("Time: " + time, video);
+
+            video.currentTime = time;
+        });
+        </script>
+
+    </body>
+</html>

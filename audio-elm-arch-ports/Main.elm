@@ -1,8 +1,9 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (div, h1, text, Html)
 import Html.App as App
 import AudioPlayer
+import Controls
 import Debug
 
 
@@ -95,3 +96,10 @@ view model =
         , div [] [ text ("Current time outside audio component: " ++ toString model.audioPlayer.currentTime) ]
         , App.map MsgAudioPlayer (AudioPlayer.view model.audioPlayer)
         ]
+
+
+
+-- PORT
+
+
+port setCurrentTime : Float -> Cmd msg

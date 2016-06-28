@@ -9,14 +9,7 @@ import Debug
 
 main =
     App.program
-        { init =
-            init
-                { mediaUrl = "http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg"
-                , mediaType = "audio/ogg"
-                , playing = False
-                , currentTime = 0
-                , controls = True
-                }
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
@@ -47,14 +40,14 @@ type Msg
 -- INIT
 
 
-init : AudioPlayer.Model -> Controls.Model -> ( Model, Cmd Msg )
-init audioPlayerModel controlsModel =
+init : ( Model, Cmd Msg )
+init =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
-            AudioPlayer.init audioPlayerModel
+            AudioPlayer.init
 
         ( controlsInit, controlsCmds ) =
-            Controls.init controlsModel
+            Controls.init
     in
         { audioPlayer = audioPlayerInit
         , controls = controlsInit

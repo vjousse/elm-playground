@@ -32,9 +32,15 @@ type Msg
 -- INIT
 
 
-init : Model -> ( Model, Cmd Msg )
-init model =
-    model ! []
+init : ( Model, Cmd Msg )
+init =
+    { mediaUrl = "http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg"
+    , mediaType = "audio/ogg"
+    , playing = False
+    , currentTime = 0
+    , controls = True
+    }
+        ! []
 
 
 

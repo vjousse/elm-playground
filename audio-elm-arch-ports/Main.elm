@@ -29,6 +29,7 @@ main =
 
 type alias Model =
     { audioPlayer : AudioPlayer.Model
+    , controls : Controls.Model
     }
 
 
@@ -39,21 +40,30 @@ type alias Model =
 type Msg
     = NoOp
     | MsgAudioPlayer AudioPlayer.Msg
+    | MsgControls Controls.Msg
 
 
 
 -- INIT
 
 
-init : AudioPlayer.Model -> ( Model, Cmd Msg )
-init audioPlayerModel =
+init : AudioPlayer.Model -> Controls.Model -> ( Model, Cmd Msg )
+init audioPlayerModel controlsModel =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
             AudioPlayer.init audioPlayerModel
+
+        ( controlsInit, controlsCmds ) =
+            Controls.init controlsModel
     in
         { audioPlayer = audioPlayerInit
+        , controls = controlsInit
         }
-            ! [ Cmd.map MsgAudioPlayer audioPlayerCmds ]
+            ! [ Cmd.batch
+                    [ Cmd.map MsgAudioPlayer audioPlayerCmds
+                    , Cmd.map MsgControls controlsCmds
+                    ]
+              ]
 
 
 
@@ -95,6 +105,7 @@ view model =
         [ h1 [] [ text "Audio player" ]
         , div [] [ text ("Current time outside audio component: " ++ toString model.audioPlayer.currentTime) ]
         , App.map MsgAudioPlayer (AudioPlayer.view model.audioPlayer)
+        , App.map MsgControls (Controls.view model.controls)
         ]
 
 

@@ -1,5 +1,6 @@
 module Controls exposing (..)
 
+import Html exposing (div, h1, text, Html)
 import Debug
 
 
@@ -14,3 +15,18 @@ type alias Model =
     , slower : Float
     , faster : Bool
     }
+
+
+type Msg
+    = NoOp
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ h1 [] [ text "Audio player" ]
+        ]

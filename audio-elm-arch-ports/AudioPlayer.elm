@@ -91,11 +91,7 @@ onPlaying msg =
 
 onTimeUpdate : (Float -> msg) -> Attribute msg
 onTimeUpdate msg =
-    let
-        test =
-            Debug.log "MSG" msg
-    in
-        on "timeupdate" (Json.map msg targetCurrentTime)
+    on "timeupdate" (Json.map msg targetCurrentTime)
 
 
 {-| A `Json.Decoder` for grabbing `event.target.currentTime`. We use this to define

@@ -5,6 +5,8 @@ import Html.App as App
 import Audio.Player exposing (Msg(..))
 import Audio.Controls
 import Debug
+import Keyboard
+import Char
 
 
 main =
@@ -34,6 +36,7 @@ type Msg
     = NoOp
     | MsgAudioPlayer Audio.Player.Msg
     | MsgControls Audio.Controls.Msg
+    | MsgKeypress Keyboard.KeyCode
 
 
 
@@ -84,6 +87,23 @@ update msg model =
                 , Cmd.map MsgControls controlsCmds
                 )
 
+        MsgKeypress code ->
+            case code of
+                -- a letter
+                65 ->
+                    let
+                        test =
+                            Debug.log "a letter" "a"
+                    in
+                        ( model, Cmd.none )
+
+                _ ->
+                    let
+                        test =
+                            Debug.log (toString code) "other"
+                    in
+                        ( model, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -94,7 +114,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Keyboard.downs MsgKeypress
 
 
 

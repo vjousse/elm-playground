@@ -7,6 +7,7 @@ import Audio.Controls
 import Debug
 import Keyboard
 import Char
+import Ports
 
 
 main =
@@ -96,6 +97,13 @@ update msg model =
                             Debug.log "a letter" "a"
                     in
                         ( model, Cmd.none )
+
+                80 ->
+                    let
+                        test =
+                            Debug.log "p letter" "p"
+                    in
+                        ( model, Ports.playIt )
 
                 _ ->
                     let

@@ -29,6 +29,8 @@ type Msg
     | TimeUpdate Float
     | Play
     | Pause
+    | Playing
+    | Paused
 
 
 
@@ -52,15 +54,21 @@ init =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "Message" msg of
+    case Debug.log (toString model) msg of
         TimeUpdate time ->
             ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
 
         Play ->
-            ( { model | playing = True }, Ports.playIt )
+            ( model, Ports.playIt )
 
         Pause ->
-            ( { model | playing = False }, Ports.pauseIt )
+            ( model, Ports.pauseIt )
+
+        Playing ->
+            ( { model | playing = True }, Cmd.none )
+
+        Paused ->
+            ( { model | playing = False }, Cmd.none )
 
         _ ->
             Debug.log "test " ( model, Cmd.none )
@@ -77,6 +85,16 @@ subscriptions model =
 
 
 -- JSON decoders
+
+
+onPause : msg -> Attribute msg
+onPause msg =
+    on "pause" (Json.succeed msg)
+
+
+onPlaying : msg -> Attribute msg
+onPlaying msg =
+    on "playing" (Json.succeed msg)
 
 
 onTimeUpdate : (Float -> msg) -> Attribute msg
@@ -118,6 +136,8 @@ view model =
                 , type' model.mediaType
                 , controls model.controls
                 , onTimeUpdate TimeUpdate
+                , onPause Paused
+                , onPlaying Playing
                 , id "audio-player"
                 ]
                 []

@@ -16,6 +16,8 @@ type alias Model =
     , mediaType : String
     , playing : Bool
     , currentTime : Float
+    , playbackRate : Float
+    , playbackStep : Float
     , controls : Bool
     }
 
@@ -27,10 +29,13 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
+    | Slower
+    | Faster
     | Play
     | Pause
     | Playing
     | Paused
+    | ResetPlayback
 
 
 
@@ -43,6 +48,8 @@ init =
     , mediaType = "audio/ogg"
     , playing = False
     , currentTime = 0
+    , playbackRate = 1
+    , playbackStep = 0.1
     , controls = True
     }
         ! []
@@ -69,6 +76,23 @@ update msg model =
 
         Paused ->
             ( { model | playing = False }, Cmd.none )
+
+        Slower ->
+            let
+                newPlaybackRate =
+                    model.playbackRate - model.playbackStep
+            in
+                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
+
+        Faster ->
+            let
+                newPlaybackRate =
+                    model.playbackRate + model.playbackStep
+            in
+                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
+
+        ResetPlayback ->
+            ( model, Ports.setPlaybackRate 1 )
 
         _ ->
             Debug.log "test " ( model, Cmd.none )
@@ -145,4 +169,7 @@ view model =
             ]
         , button [ onClick Play ] [ text "Play" ]
         , button [ onClick Pause ] [ text "Pause" ]
+        , button [ onClick Slower ] [ text "Slower" ]
+        , button [ onClick Faster ] [ text "Faster" ]
+        , button [ onClick ResetPlayback ] [ text "Reset playback" ]
         ]

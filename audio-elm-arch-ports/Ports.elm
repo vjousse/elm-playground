@@ -6,6 +6,9 @@ port module Ports exposing (..)
 port setCurrentTime : Float -> Cmd msg
 
 
+port setPlaybackRate : Float -> Cmd msg
+
+
 port play : () -> Cmd msg
 
 

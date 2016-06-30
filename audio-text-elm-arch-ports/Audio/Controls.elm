@@ -1,4 +1,4 @@
-module Controls exposing (Model, Msg(..), init, view, update)
+module Audio.Controls exposing (Model, Msg(..), init, view, update)
 
 import Html.Events exposing (onClick)
 import Html exposing (button, div, h1, text, Html)

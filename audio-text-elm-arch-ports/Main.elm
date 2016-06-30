@@ -2,8 +2,8 @@ port module Main exposing (..)
 
 import Html exposing (div, h1, text, Html)
 import Html.App as App
-import AudioPlayer exposing (Msg(..))
-import Controls
+import Audio.Player exposing (Msg(..))
+import Audio.Controls
 import Debug
 
 
@@ -21,8 +21,8 @@ main =
 
 
 type alias Model =
-    { audioPlayer : AudioPlayer.Model
-    , controls : Controls.Model
+    { audioPlayer : Audio.Player.Model
+    , controls : Audio.Controls.Model
     }
 
 
@@ -32,8 +32,8 @@ type alias Model =
 
 type Msg
     = NoOp
-    | MsgAudioPlayer AudioPlayer.Msg
-    | MsgControls Controls.Msg
+    | MsgAudioPlayer Audio.Player.Msg
+    | MsgControls Audio.Controls.Msg
 
 
 
@@ -44,10 +44,10 @@ init : ( Model, Cmd Msg )
 init =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
-            AudioPlayer.init
+            Audio.Player.init
 
         ( controlsInit, controlsCmds ) =
-            Controls.init
+            Audio.Controls.init
     in
         { audioPlayer = audioPlayerInit
         , controls = controlsInit
@@ -69,7 +69,7 @@ update msg model =
         MsgAudioPlayer msg' ->
             let
                 ( audioPlayerModel, audioPlayerCmds ) =
-                    AudioPlayer.update msg' model.audioPlayer
+                    Audio.Player.update msg' model.audioPlayer
             in
                 ( { model | audioPlayer = audioPlayerModel }
                 , Cmd.map MsgAudioPlayer audioPlayerCmds
@@ -78,7 +78,7 @@ update msg model =
         MsgControls msg' ->
             let
                 ( controlsModel, controlsCmds ) =
-                    Controls.update msg' model.controls
+                    Audio.Controls.update msg' model.controls
             in
                 ( { model | controls = controlsModel }
                 , Cmd.map MsgControls controlsCmds
@@ -105,6 +105,6 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [] [ text "Audio player" ]
-        , App.map MsgAudioPlayer (AudioPlayer.view model.audioPlayer)
-        , App.map MsgControls (Controls.view model.controls)
+        , App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
+        , App.map MsgControls (Audio.Controls.view model.controls)
         ]

@@ -1,4 +1,4 @@
-module AudioPlayer exposing (Model, Msg(..), init, update, view, subscriptions)
+module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
 import Html exposing (audio, button, div, h2, text, Attribute, Html)
 import Html.Attributes exposing (class, controls, id, type', src)

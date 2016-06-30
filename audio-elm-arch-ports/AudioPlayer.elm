@@ -16,8 +16,6 @@ type alias Model =
     , mediaType : String
     , playing : Bool
     , currentTime : Float
-    , playbackRate : Float
-    , playbackStep : Float
     , controls : Bool
     }
 
@@ -29,13 +27,8 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
-    | Slower
-    | Faster
-    | Play
-    | Pause
     | Playing
     | Paused
-    | ResetPlayback
 
 
 
@@ -44,12 +37,10 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    { mediaUrl = "http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg"
-    , mediaType = "audio/ogg"
+    { mediaUrl = "http://localhost/lcp_q_gov.mp3"
+    , mediaType = "audio/mp3"
     , playing = False
     , currentTime = 0
-    , playbackRate = 1
-    , playbackStep = 0.1
     , controls = True
     }
         ! []
@@ -65,34 +56,11 @@ update msg model =
         TimeUpdate time ->
             ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
 
-        Play ->
-            ( model, Ports.playIt )
-
-        Pause ->
-            ( model, Ports.pauseIt )
-
         Playing ->
             ( { model | playing = True }, Cmd.none )
 
         Paused ->
             ( { model | playing = False }, Cmd.none )
-
-        Slower ->
-            let
-                newPlaybackRate =
-                    model.playbackRate - model.playbackStep
-            in
-                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
-
-        Faster ->
-            let
-                newPlaybackRate =
-                    model.playbackRate + model.playbackStep
-            in
-                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
-
-        ResetPlayback ->
-            ( model, Ports.setPlaybackRate 1 )
 
         _ ->
             Debug.log "test " ( model, Cmd.none )
@@ -167,9 +135,4 @@ view model =
                 []
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
             ]
-        , button [ onClick Play ] [ text "Play" ]
-        , button [ onClick Pause ] [ text "Pause" ]
-        , button [ onClick Slower ] [ text "Slower" ]
-        , button [ onClick Faster ] [ text "Faster" ]
-        , button [ onClick ResetPlayback ] [ text "Reset playback" ]
         ]

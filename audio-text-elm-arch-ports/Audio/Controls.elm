@@ -15,6 +15,7 @@ type alias Model =
     , slower : Bool
     , faster : Bool
     , resetPlayback : Bool
+    , toggle : Bool
     , playbackRate : Float
     , playbackStep : Float
     }
@@ -30,6 +31,7 @@ type Msg
     | Faster
     | Play
     | Pause
+    | Toggle
     | ResetPlayback
 
 
@@ -44,6 +46,7 @@ init =
     , slower = True
     , faster = True
     , resetPlayback = True
+    , toggle = True
     , playbackRate = 1
     , playbackStep = 0.1
     }
@@ -93,6 +96,7 @@ view model =
         , controlButton model.slower Slower "Slower"
         , controlButton model.faster Faster "Faster"
         , controlButton model.faster ResetPlayback "Reset playback"
+        , controlButton model.toggle Toggle "Toggle play/pause"
         ]
 
 

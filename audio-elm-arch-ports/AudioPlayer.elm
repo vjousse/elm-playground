@@ -1,10 +1,11 @@
-module AudioPlayer exposing (Model, Msg, init, update, view, subscriptions)
+module AudioPlayer exposing (Model, Msg(..), init, update, view, subscriptions)
 
-import Html exposing (audio, div, h2, text, Attribute, Html)
-import Html.Attributes exposing (class, controls, type', src)
-import Html.Events exposing (on)
+import Html exposing (audio, button, div, h2, text, Attribute, Html)
+import Html.Attributes exposing (class, controls, id, type', src)
+import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
 import Debug
+import Ports
 
 
 -- MODEL
@@ -26,6 +27,8 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
+    | Play
+    | Pause
 
 
 
@@ -52,6 +55,12 @@ update msg model =
     case Debug.log "Message" msg of
         TimeUpdate time ->
             ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
+
+        Play ->
+            ( { model | playing = True }, Ports.playIt )
+
+        Pause ->
+            ( { model | playing = False }, Ports.pauseIt )
 
         _ ->
             Debug.log "test " ( model, Cmd.none )
@@ -102,13 +111,18 @@ targetCurrentTime =
 
 view : Model -> Html Msg
 view model =
-    div [ class "elm-audio-player" ]
-        [ audio
-            [ src model.mediaUrl
-            , type' model.mediaType
-            , controls model.controls
-            , onTimeUpdate TimeUpdate
+    div []
+        [ div [ class "elm-audio-player" ]
+            [ audio
+                [ src model.mediaUrl
+                , type' model.mediaType
+                , controls model.controls
+                , onTimeUpdate TimeUpdate
+                , id "audio-player"
+                ]
+                []
+            , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
             ]
-            []
-        , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
+        , button [ onClick Play ] [ text "Play" ]
+        , button [ onClick Pause ] [ text "Pause" ]
         ]

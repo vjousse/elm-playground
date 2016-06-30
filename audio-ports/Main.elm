@@ -1,4 +1,4 @@
-port module Main exposing (..)
+module Main exposing (..)
 
 import Html exposing (Attribute, Html, audio, div, text, button)
 import Html.Attributes exposing (class, controls, type', src, id)

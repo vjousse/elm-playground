@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Html exposing (div, h1, text, Html)
 import Html.App as App
-import AudioPlayer
+import AudioPlayer exposing (Msg(..))
 import Controls
 import Debug
 
@@ -66,10 +66,10 @@ init =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        MsgAudioPlayer msg ->
+        MsgAudioPlayer msg' ->
             let
                 ( audioPlayerModel, audioPlayerCmds ) =
-                    AudioPlayer.update msg model.audioPlayer
+                    AudioPlayer.update msg' model.audioPlayer
             in
                 ( { model | audioPlayer = audioPlayerModel }
                 , Cmd.map MsgAudioPlayer audioPlayerCmds
@@ -100,26 +100,3 @@ view model =
         , App.map MsgAudioPlayer (AudioPlayer.view model.audioPlayer)
         , App.map MsgControls (Controls.view model.controls)
         ]
-
-
-
--- PORT
-
-
-port setCurrentTime : Float -> Cmd msg
-
-
-port play : () -> Cmd msg
-
-
-port pause : () -> Cmd msg
-
-
-playIt : Cmd msg
-playIt =
-    play ()
-
-
-pauseIt : Cmd msg
-pauseIt =
-    pause ()

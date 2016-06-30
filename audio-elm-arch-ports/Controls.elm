@@ -11,7 +11,7 @@ import Ports
 
 type alias Model =
     { play : Bool
-    , stop : Bool
+    , pause : Bool
     , slower : Bool
     , faster : Bool
     , resetPlayback : Bool
@@ -40,7 +40,7 @@ type Msg
 init : ( Model, Cmd Msg )
 init =
     { play = True
-    , stop = True
+    , pause = True
     , slower = True
     , faster = True
     , resetPlayback = True
@@ -88,9 +88,17 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [] [ text "Controls" ]
-        , button [ onClick Play ] [ text "Play" ]
-        , button [ onClick Pause ] [ text "Pause" ]
-        , button [ onClick Slower ] [ text "Slower" ]
-        , button [ onClick Faster ] [ text "Faster" ]
-        , button [ onClick ResetPlayback ] [ text "Reset playback" ]
+        , controlButton model.play Play "Play"
+        , controlButton model.pause Pause "Pause"
+        , controlButton model.slower Slower "Slower"
+        , controlButton model.faster Faster "Faster"
+        , controlButton model.faster ResetPlayback "Reset playback"
         ]
+
+
+controlButton : Bool -> Msg -> String -> Html Msg
+controlButton display msg label =
+    if display then
+        button [ onClick msg ] [ text label ]
+    else
+        text ""

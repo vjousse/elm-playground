@@ -67,13 +67,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         MsgAudioPlayer msg' ->
-            let
-                ( audioPlayerModel, audioPlayerCmds ) =
-                    Audio.Player.update msg' model.audioPlayer
-            in
-                ( { model | audioPlayer = audioPlayerModel }
-                , Cmd.map MsgAudioPlayer audioPlayerCmds
-                )
+            updateChild Audio.Player.update msg' model.audioPlayer model (\audioModel parentModel -> { parentModel | audioPlayer = audioModel })
 
         MsgControls msg' ->
             let
@@ -88,7 +82,27 @@ update msg model =
             ( model, Cmd.none )
 
 
+updateChild : (cMsg -> cModel -> ( cModel, Cmd cMsg )) -> cMsg -> cModel -> pModel -> (cModel -> pModel -> pModel) -> ( pModel, Cmd Msg )
+updateChild updateChild msg childModel parentModel updateParent =
+    let
+        ( audioPlayerModel, audioPlayerCmds ) =
+            updateChild msg childModel
+    in
+        ( updateParent audioPlayerModel parentModel
+        , Cmd.none
+        )
 
+
+
+{-
+   let
+       ( audioPlayerModel, audioPlayerCmds ) =
+           Audio.Player.update msg' model.audioPlayer
+   in
+       ( { model | audioPlayer = audioPlayerModel }
+       , Cmd.map MsgAudioPlayer audioPlayerCmds
+       )
+-}
 -- SUBSCRIPTIONS
 
 

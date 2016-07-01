@@ -1,7 +1,7 @@
 module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
-import Html exposing (a, audio, button, div, h1, h2, i, span, text, Attribute, Html)
-import Html.Attributes exposing (class, controls, href, id, type', src)
+import Html exposing (a, audio, button, div, h1, h2, i, li, span, text, Attribute, Html)
+import Html.Attributes exposing (class, controls, href, id, type', src, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
 import Debug
@@ -206,6 +206,7 @@ view model =
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
             , div []
                 [ h1 [] [ text "Controls" ]
+                , progressBar
                 , controlButton model.controls.toggle
                     Toggle
                     "⎵"
@@ -218,6 +219,26 @@ view model =
                 , controlButton model.controls.slower Slower "F1" "\xE01F"
                   --, controlButton model.controls.faster ResetPlayback "Reset playback"
                   --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
+                ]
+            ]
+        ]
+
+
+progressBar : Html Msg
+progressBar =
+    li [ class "nav-item" ]
+        [ a [ class "nav-link" ]
+            [ span [ class "nav-text" ]
+                [ div
+                    [ class "progress nav-text"
+                    , style [ ( "width", "200px" ), ( "margin-bottom", "0" ) ]
+                    ]
+                    [ div
+                        [ class "progress-bar success nav-text"
+                        , style [ ( "width", "25%" ), ( "padding-top", "2px" ) ]
+                        ]
+                        [ text "25%" ]
+                    ]
                 ]
             ]
         ]

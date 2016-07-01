@@ -1,7 +1,7 @@
 # Compile
 
-    elm make Main.elm --output=elm.js
+    elm make src/Main.elm --output=public/elm.js
 
 # Run
 
-Compile and then open index.html
+Compile and then open `public/index.html`

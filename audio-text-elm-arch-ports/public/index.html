@@ -1,44 +1,59 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Main</title>
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+
+    <!-- style -->
+    <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="assets/material-design-icons/material-design-icons.css" type="text/css" />
+
+    <link rel="stylesheet" href="assets/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <!-- build:css ../assets/styles/app.min.css -->
+    <link rel="stylesheet" href="assets/styles/app.css" type="text/css" />
+    <!-- endbuild -->
+    <link rel="stylesheet" href="assets/styles/font.css" type="text/css" />
+</head>
+<body>
+
+    <div class="app" id="app">
         <div id="elm"></div>
-        <script src="elm.js"></script>
-        <script>
-        var node = document.getElementById('elm');
-        var app = Elm.Main.embed(node, {mediaUrl: "http://localhost/lcp_q_gov.mp3", mediaType: "audio/mp3", toggleKeyCode: 32 });
 
-        app.ports.setCurrentTime.subscribe(function(time) {
-            var audio = document.getElementById('audio-player');
-            console.log("Time: " + time, audio);
+    </div>
 
-            audio.currentTime = time;
-        });
+<script src="elm.js"></script>
+<script>
+var node = document.getElementById('elm');
+var app = Elm.Main.embed(node, {mediaUrl: "http://localhost/lcp_q_gov.mp3", mediaType: "audio/mp3", toggleKeyCode: 32 });
 
-        app.ports.setPlaybackRate.subscribe(function(rate) {
-            var audio = document.getElementById('audio-player');
-            console.log("Rate: " + rate, audio);
+app.ports.setCurrentTime.subscribe(function(time) {
+    var audio = document.getElementById('audio-player');
+    console.log("Time: " + time, audio);
 
-            audio.playbackRate = rate;
-        });
+    audio.currentTime = time;
+});
 
-        app.ports.play.subscribe(function() {
-            var audio = document.getElementById('audio-player');
-            console.log("Play: ", audio);
+app.ports.setPlaybackRate.subscribe(function(rate) {
+    var audio = document.getElementById('audio-player');
+    console.log("Rate: " + rate, audio);
 
-            audio.play();
-        });
+    audio.playbackRate = rate;
+});
 
-        app.ports.pause.subscribe(function() {
-            var audio = document.getElementById('audio-player');
-            console.log("Pause: ", audio);
+app.ports.play.subscribe(function() {
+    var audio = document.getElementById('audio-player');
+    console.log("Play: ", audio);
 
-            audio.pause();
-        });
-        </script>
+    audio.play();
+});
 
-    </body>
+app.ports.pause.subscribe(function() {
+    var audio = document.getElementById('audio-player');
+    console.log("Pause: ", audio);
+
+    audio.pause();
+});
+</script>
+
+</body>
 </html>

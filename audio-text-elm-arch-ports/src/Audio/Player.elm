@@ -4,6 +4,7 @@ import Html exposing (a, audio, button, div, h1, h2, i, li, span, text, Attribut
 import Html.Attributes exposing (class, controls, href, id, type', src, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
+import List
 import Debug
 import Ports
 
@@ -204,24 +205,33 @@ view model =
                 ]
                 []
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
+              -- TODO: Put everything around a nice <ul> tag
             , div []
-                [ h1 [] [ text "Controls" ]
-                , progressBar
-                , controlButton model.controls.toggle
-                    Toggle
-                    "⎵"
-                    (if model.playing then
-                        "\xE036"
-                     else
-                        "\xE039"
-                    )
-                , controlButton model.controls.faster Faster "F2" "\xE020"
-                , controlButton model.controls.slower Slower "F1" "\xE01F"
-                  --, controlButton model.controls.faster ResetPlayback "Reset playback"
-                  --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
-                ]
+                (List.append
+                    [ h1 [] [ text "Controls" ]
+                    , progressBar
+                      --, controlButton model.controls.faster ResetPlayback "Reset playback"
+                      --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
+                    ]
+                    (audioControls model)
+                )
             ]
         ]
+
+
+audioControls : Model -> List (Html Msg)
+audioControls model =
+    [ controlButton model.controls.toggle
+        Toggle
+        "⎵"
+        (if model.playing then
+            "\xE036"
+         else
+            "\xE039"
+        )
+    , controlButton model.controls.faster Faster "F2" "\xE020"
+    , controlButton model.controls.slower Slower "F1" "\xE01F"
+    ]
 
 
 progressBar : Html Msg

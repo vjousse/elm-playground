@@ -40,6 +40,7 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
+    | SetCurrentTime Float
     | SetPlaying
     | SetPaused
     | Slower
@@ -87,7 +88,7 @@ init flags =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log (toString model) msg of
+    case msg of
         TimeUpdate time ->
             ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
 
@@ -103,12 +104,6 @@ update msg model =
             else
                 ( model, Ports.playIt )
 
-        Play ->
-            ( model, Ports.playIt )
-
-        Pause ->
-            ( model, Ports.pauseIt )
-
         Slower ->
             let
                 newPlaybackRate =
@@ -122,6 +117,9 @@ update msg model =
                     model.playbackRate + model.playbackStep
             in
                 ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
+
+        SetCurrentTime time ->
+            ( model, Ports.setCurrentTime time )
 
         ResetPlayback ->
             ( model, Ports.setPlaybackRate 1 )
@@ -196,12 +194,17 @@ view model =
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
             , div []
                 [ h1 [] [ text "Controls" ]
-                , controlButton model.controls.play Play "Play"
-                , controlButton model.controls.pause Pause "Pause"
+                , controlButton model.controls.pause
+                    Toggle
+                    (if model.playing then
+                        "Pause"
+                     else
+                        "Play"
+                    )
                 , controlButton model.controls.slower Slower "Slower"
                 , controlButton model.controls.faster Faster "Faster"
                 , controlButton model.controls.faster ResetPlayback "Reset playback"
-                , controlButton model.controls.toggle Toggle "Toggle play/pause"
+                , controlButton model.controls.toggle (SetCurrentTime 2.0) "Set time to 2s"
                 ]
             ]
         ]

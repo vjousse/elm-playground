@@ -9,7 +9,7 @@
         <script src="elm.js"></script>
         <script>
         var node = document.getElementById('elm');
-        var app = Elm.Main.embed(node);
+        var app = Elm.Main.embed(node, {mediaUrl: "http://localhost/lcp_q_gov.mp3", mediaType: "audio/mp3", toggleKeyCode: 32 });
 
         app.ports.setCurrentTime.subscribe(function(time) {
             var audio = document.getElementById('audio-player');

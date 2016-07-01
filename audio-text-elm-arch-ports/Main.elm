@@ -10,7 +10,7 @@ import Ports
 
 
 main =
-    App.program
+    App.programWithFlags
         { init = init
         , view = view
         , update = update
@@ -24,6 +24,7 @@ main =
 
 type alias Model =
     { audioPlayer : Audio.Player.Model
+    , toggleKeyCode : Keyboard.KeyCode
     }
 
 
@@ -37,17 +38,25 @@ type Msg
     | MsgKeypress Keyboard.KeyCode
 
 
+type alias Flags =
+    { mediaUrl : String
+    , mediaType : String
+    , toggleKeyCode : Keyboard.KeyCode
+    }
+
+
 
 -- INIT
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
             Audio.Player.init
     in
         { audioPlayer = audioPlayerInit
+        , toggleKeyCode = flags.toggleKeyCode
         }
             ! [ Cmd.batch
                     [ Cmd.map MsgAudioPlayer audioPlayerCmds
@@ -72,19 +81,16 @@ update msg model =
                 )
 
         MsgKeypress code ->
-            case code of
-                -- Space keycode
-                32 ->
-                    let
-                        ( audioPlayerModel, audioPlayerCmds ) =
-                            Audio.Player.update Toggle model.audioPlayer
-                    in
-                        ( { model | audioPlayer = audioPlayerModel }
-                        , Cmd.map MsgAudioPlayer audioPlayerCmds
-                        )
-
-                _ ->
-                    ( model, Cmd.none )
+            if code == model.toggleKeyCode then
+                let
+                    ( audioPlayerModel, audioPlayerCmds ) =
+                        Audio.Player.update Toggle model.audioPlayer
+                in
+                    ( { model | audioPlayer = audioPlayerModel }
+                    , Cmd.map MsgAudioPlayer audioPlayerCmds
+                    )
+            else
+                ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )

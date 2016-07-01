@@ -91,6 +91,12 @@ update msg model =
         SetPaused ->
             ( { model | playing = False }, Cmd.none )
 
+        Toggle ->
+            if model.playing then
+                ( model, Ports.pauseIt )
+            else
+                ( model, Ports.playIt )
+
         Play ->
             ( model, Ports.playIt )
 

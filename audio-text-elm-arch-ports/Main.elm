@@ -109,3 +109,13 @@ view model =
         [ h1 [] [ text "Audio player" ]
         , App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
         ]
+
+
+
+-- Convert MSG to Cmd Msg
+{-
+
+   send : Msg -> Cmd Msg
+   send msg =
+         Task.perform identity identity (Task.succeed msg)
+-}

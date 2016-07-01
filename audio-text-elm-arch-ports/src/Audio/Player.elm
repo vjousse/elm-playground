@@ -1,7 +1,7 @@
 module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
-import Html exposing (audio, button, div, h1, h2, text, Attribute, Html)
-import Html.Attributes exposing (class, controls, id, type', src)
+import Html exposing (a, audio, button, div, h1, h2, i, span, text, Attribute, Html)
+import Html.Attributes exposing (class, controls, href, id, type', src)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
 import Debug
@@ -206,25 +206,36 @@ view model =
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
             , div []
                 [ h1 [] [ text "Controls" ]
-                , controlButton model.controls.pause
+                , controlButton model.controls.toggle
                     Toggle
+                    "⎵"
                     (if model.playing then
-                        "Pause"
+                        "\xE036"
                      else
-                        "Play"
+                        "\xE039"
                     )
-                , controlButton model.controls.slower Slower "Slower"
-                , controlButton model.controls.faster Faster "Faster"
-                , controlButton model.controls.faster ResetPlayback "Reset playback"
-                , controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
+                , controlButton model.controls.faster Faster "F2" "\xE020"
+                , controlButton model.controls.slower Slower "F1" "\xE01F"
+                  --, controlButton model.controls.faster ResetPlayback "Reset playback"
+                  --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
                 ]
             ]
         ]
 
 
-controlButton : Bool -> Msg -> String -> Html Msg
-controlButton display msg label =
+controlButton : Bool -> Msg -> String -> String -> Html Msg
+controlButton display msg label iconUtf8 =
     if display then
-        button [ onClick msg ] [ text label ]
+        a
+            [ class "nav-link"
+            , onClick msg
+            ]
+            [ span [ class "nav-text" ]
+                [ i [ class "material-icons" ]
+                    [ text iconUtf8
+                    ]
+                , span [ class "text-xs" ] [ text label ]
+                ]
+            ]
     else
         text ""

@@ -17,7 +17,26 @@
 <body>
 
     <div class="app" id="app">
-        <div id="elm"></div>
+
+        <!-- aside -->
+        <div id="aside" class="app-aside modal fade nav-dropdown" ng-class="{'folded': app.setting.folded}">
+            <!-- fluid app aside -->
+            <div class="left navside dark dk" layout="column">
+            <div class="navbar no-radius">
+            </div>
+            <div flex class="hide-scroll">
+                <nav class="scroll nav-light">
+                </nav>
+            </div>
+            <div flex-no-shrink class="b-t">
+            </div>
+            </div>
+        </div>
+        <!-- / -->
+
+        <div id="content" class="app-content box-shadow-z0" role="main">
+            <div id="elm"></div>
+        </div>
 
     </div>
 

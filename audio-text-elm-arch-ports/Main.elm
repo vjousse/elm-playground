@@ -73,27 +73,18 @@ update msg model =
 
         MsgKeypress code ->
             case code of
-                -- a letter
-                65 ->
+                -- Space keycode
+                32 ->
                     let
-                        test =
-                            Debug.log "a letter" "a"
+                        ( audioPlayerModel, audioPlayerCmds ) =
+                            Audio.Player.update Toggle model.audioPlayer
                     in
-                        ( model, Cmd.none )
-
-                80 ->
-                    let
-                        test =
-                            Debug.log "p letter" "p"
-                    in
-                        ( model, Ports.playIt )
+                        ( { model | audioPlayer = audioPlayerModel }
+                        , Cmd.map MsgAudioPlayer audioPlayerCmds
+                        )
 
                 _ ->
-                    let
-                        test =
-                            Debug.log (toString code) "other"
-                    in
-                        ( model, Cmd.none )
+                    ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )

@@ -1,6 +1,6 @@
 module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
-import Html exposing (audio, button, div, h2, text, Attribute, Html)
+import Html exposing (audio, button, div, h1, h2, text, Attribute, Html)
 import Html.Attributes exposing (class, controls, id, type', src)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
@@ -11,12 +11,25 @@ import Ports
 -- MODEL
 
 
+type alias ControlsDisplay =
+    { play : Bool
+    , pause : Bool
+    , slower : Bool
+    , faster : Bool
+    , resetPlayback : Bool
+    , toggle : Bool
+    }
+
+
 type alias Model =
     { mediaUrl : String
     , mediaType : String
     , playing : Bool
     , currentTime : Float
-    , controls : Bool
+    , playbackRate : Float
+    , playbackStep : Float
+    , defaultControls : Bool
+    , controls : ControlsDisplay
     }
 
 
@@ -27,8 +40,14 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
-    | Playing
-    | Paused
+    | SetPlaying
+    | SetPaused
+    | Slower
+    | Faster
+    | Play
+    | Pause
+    | Toggle
+    | ResetPlayback
 
 
 
@@ -41,7 +60,17 @@ init =
     , mediaType = "audio/mp3"
     , playing = False
     , currentTime = 0
-    , controls = True
+    , playbackRate = 1
+    , playbackStep = 0.1
+    , defaultControls = True
+    , controls =
+        { play = True
+        , pause = True
+        , slower = True
+        , faster = True
+        , resetPlayback = True
+        , toggle = True
+        }
     }
         ! []
 
@@ -56,14 +85,37 @@ update msg model =
         TimeUpdate time ->
             ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
 
-        Playing ->
+        SetPlaying ->
             ( { model | playing = True }, Cmd.none )
 
-        Paused ->
+        SetPaused ->
             ( { model | playing = False }, Cmd.none )
 
+        Play ->
+            ( model, Ports.playIt )
+
+        Pause ->
+            ( model, Ports.pauseIt )
+
+        Slower ->
+            let
+                newPlaybackRate =
+                    model.playbackRate - model.playbackStep
+            in
+                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
+
+        Faster ->
+            let
+                newPlaybackRate =
+                    model.playbackRate + model.playbackStep
+            in
+                ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
+
+        ResetPlayback ->
+            ( model, Ports.setPlaybackRate 1 )
+
         _ ->
-            Debug.log "test " ( model, Cmd.none )
+            Debug.log "Debug Player Component " ( model, Cmd.none )
 
 
 
@@ -122,13 +174,30 @@ view model =
             [ audio
                 [ src model.mediaUrl
                 , type' model.mediaType
-                , controls model.controls
+                , controls model.defaultControls
                 , onTimeUpdate TimeUpdate
-                , onPause Paused
-                , onPlaying Playing
+                , onPause SetPaused
+                , onPlaying SetPlaying
                 , id "audio-player"
                 ]
                 []
             , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
+            , div []
+                [ h1 [] [ text "Controls" ]
+                , controlButton model.controls.play Play "Play"
+                , controlButton model.controls.pause Pause "Pause"
+                , controlButton model.controls.slower Slower "Slower"
+                , controlButton model.controls.faster Faster "Faster"
+                , controlButton model.controls.faster ResetPlayback "Reset playback"
+                , controlButton model.controls.toggle Toggle "Toggle play/pause"
+                ]
             ]
         ]
+
+
+controlButton : Bool -> Msg -> String -> Html Msg
+controlButton display msg label =
+    if display then
+        button [ onClick msg ] [ text label ]
+    else
+        text ""

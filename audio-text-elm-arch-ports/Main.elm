@@ -3,7 +3,6 @@ port module Main exposing (..)
 import Html exposing (div, h1, text, Html)
 import Html.App as App
 import Audio.Player exposing (Msg(..))
-import Audio.Controls
 import Debug
 import Keyboard
 import Char
@@ -25,7 +24,6 @@ main =
 
 type alias Model =
     { audioPlayer : Audio.Player.Model
-    , controls : Audio.Controls.Model
     }
 
 
@@ -36,7 +34,6 @@ type alias Model =
 type Msg
     = NoOp
     | MsgAudioPlayer Audio.Player.Msg
-    | MsgControls Audio.Controls.Msg
     | MsgKeypress Keyboard.KeyCode
 
 
@@ -49,16 +46,11 @@ init =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
             Audio.Player.init
-
-        ( controlsInit, controlsCmds ) =
-            Audio.Controls.init
     in
         { audioPlayer = audioPlayerInit
-        , controls = controlsInit
         }
             ! [ Cmd.batch
                     [ Cmd.map MsgAudioPlayer audioPlayerCmds
-                    , Cmd.map MsgControls controlsCmds
                     ]
               ]
 
@@ -77,15 +69,6 @@ update msg model =
             in
                 ( { model | audioPlayer = audioPlayerModel }
                 , Cmd.map MsgAudioPlayer audioPlayerCmds
-                )
-
-        MsgControls msg' ->
-            let
-                ( controlsModel, controlsCmds ) =
-                    Audio.Controls.update msg' model.controls
-            in
-                ( { model | controls = controlsModel }
-                , Cmd.map MsgControls controlsCmds
                 )
 
         MsgKeypress code ->
@@ -134,5 +117,4 @@ view model =
     div []
         [ h1 [] [ text "Audio player" ]
         , App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
-        , App.map MsgControls (Audio.Controls.view model.controls)
         ]

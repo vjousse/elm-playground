@@ -53,7 +53,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         ( audioPlayerInit, audioPlayerCmds ) =
-            Audio.Player.init
+            Audio.Player.init { mediaUrl = flags.mediaUrl, mediaType = flags.mediaType }
     in
         { audioPlayer = audioPlayerInit
         , toggleKeyCode = flags.toggleKeyCode

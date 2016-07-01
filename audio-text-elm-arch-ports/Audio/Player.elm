@@ -50,14 +50,20 @@ type Msg
     | ResetPlayback
 
 
+type alias Flags =
+    { mediaUrl : String
+    , mediaType : String
+    }
+
+
 
 -- INIT
 
 
-init : ( Model, Cmd Msg )
-init =
-    { mediaUrl = "http://localhost/lcp_q_gov.mp3"
-    , mediaType = "audio/mp3"
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    { mediaUrl = flags.mediaUrl
+    , mediaType = flags.mediaType
     , playing = False
     , currentTime = 0
     , playbackRate = 1

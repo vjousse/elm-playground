@@ -70,7 +70,7 @@ init flags =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "usal AudioPlayer MSG" msg of
+    case Debug.log "[Main] msg" msg of
         MsgAudioPlayer msg' ->
             let
                 ( audioPlayerModel, audioPlayerCmds ) =

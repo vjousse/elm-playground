@@ -29,6 +29,7 @@ type alias Model =
     , playbackRate : Float
     , playbackStep : Float
     , defaultControls : Bool
+    , duration : Maybe Float
     , controls : ControlsDisplay
     }
 
@@ -40,7 +41,8 @@ type alias Model =
 type Msg
     = NoOp
     | TimeUpdate Float
-    | SetCurrentTime Float
+    | MoveToCurrentTime Float
+    | SetDuration Float
     | SetPlaying
     | SetPaused
     | Slower
@@ -70,6 +72,7 @@ init flags =
     , playbackRate = 1
     , playbackStep = 0.1
     , defaultControls = True
+    , duration = Nothing
     , controls =
         { play = True
         , pause = True
@@ -88,9 +91,12 @@ init flags =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    case Debug.log ("[Audio.Player] " ++ toString msg) msg of
         TimeUpdate time ->
-            ( { model | currentTime = Debug.log (toString time) time }, Cmd.none )
+            ( { model | currentTime = time }, Cmd.none )
+
+        SetDuration time ->
+            ( { model | duration = Just time }, Cmd.none )
 
         SetPlaying ->
             ( { model | playing = True }, Cmd.none )
@@ -118,7 +124,7 @@ update msg model =
             in
                 ( { model | playbackRate = newPlaybackRate }, Ports.setPlaybackRate newPlaybackRate )
 
-        SetCurrentTime time ->
+        MoveToCurrentTime time ->
             ( model, Ports.setCurrentTime time )
 
         ResetPlayback ->
@@ -151,9 +157,14 @@ onPlaying msg =
     on "playing" (Json.succeed msg)
 
 
+onCanPlay : (Float -> msg) -> Attribute msg
+onCanPlay msg =
+    on "canplay" (Json.map msg (targetFloatProperty "duration"))
+
+
 onTimeUpdate : (Float -> msg) -> Attribute msg
 onTimeUpdate msg =
-    on "timeupdate" (Json.map msg targetCurrentTime)
+    on "timeupdate" (Json.map msg (targetFloatProperty "currentTime"))
 
 
 {-| A `Json.Decoder` for grabbing `event.target.currentTime`. We use this to define
@@ -168,9 +179,9 @@ onTimeUpdate msg =
 You probably will never need this, but hopefully it gives some insights into
 how to make custom event handlers.
 -}
-targetCurrentTime : Json.Decoder Float
-targetCurrentTime =
-    Debug.log "in targetCurrentTime" Json.at [ "target", "currentTime" ] Json.float
+targetFloatProperty : String -> Json.Decoder Float
+targetFloatProperty property =
+    Json.at [ "target", property ] Json.float
 
 
 
@@ -188,6 +199,7 @@ view model =
                 , onTimeUpdate TimeUpdate
                 , onPause SetPaused
                 , onPlaying SetPlaying
+                , onCanPlay SetDuration
                 , id "audio-player"
                 ]
                 []
@@ -204,7 +216,7 @@ view model =
                 , controlButton model.controls.slower Slower "Slower"
                 , controlButton model.controls.faster Faster "Faster"
                 , controlButton model.controls.faster ResetPlayback "Reset playback"
-                , controlButton model.controls.toggle (SetCurrentTime 2.0) "Set time to 2s"
+                , controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
                 ]
             ]
         ]

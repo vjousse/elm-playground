@@ -112,8 +112,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ text "Audio player" ]
-        , App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
+        [ App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
         ]
 
 

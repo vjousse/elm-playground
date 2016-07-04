@@ -72,7 +72,7 @@ init flags =
     , currentTime = 0
     , playbackRate = 1
     , playbackStep = 0.1
-    , defaultControls = True
+    , defaultControls = False
     , duration = Nothing
     , controls =
         { play = True
@@ -204,12 +204,10 @@ view model =
                 , id "audio-player"
                 ]
                 []
-            , div [] [ text ("Current time inside audio component: " ++ toString model.currentTime) ]
               -- TODO: Put everything around a nice <ul> tag
             , div []
                 (List.append
-                    [ h1 [] [ text "Controls" ]
-                    , progressBar
+                    [ progressBar
                       --, controlButton model.controls.faster ResetPlayback "Reset playback"
                       --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
                     ]

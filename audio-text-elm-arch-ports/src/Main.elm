@@ -120,7 +120,10 @@ view model =
 -- Convert MSG to Cmd Msg
 {-
 
-   send : Msg -> Cmd Msg
-   send msg =
-         Task.perform identity identity (Task.succeed msg)
+      send : Msg -> Cmd Msg
+      send msg =
+            Task.perform identity identity (Task.succeed msg)
+
+   or a little be nicer: Init |> Task.succeed |> Task.perform identity identity`
+
 -}

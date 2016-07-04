@@ -1,6 +1,6 @@
 module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
-import Html exposing (a, audio, button, div, h1, h2, i, li, span, text, Attribute, Html)
+import Html exposing (a, audio, button, div, h1, h2, i, li, span, text, ul, Attribute, Html)
 import Html.Attributes exposing (class, controls, href, id, type', src, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
@@ -204,15 +204,16 @@ view model =
                 , id "audio-player"
                 ]
                 []
-              -- TODO: Put everything around a nice <ul> tag
-            , div []
-                (List.append
-                    [ progressBar
-                      --, controlButton model.controls.faster ResetPlayback "Reset playback"
-                      --, controlButton model.controls.toggle (MoveToCurrentTime 2.0) "Set time to 2s"
+            , div [ class "app-header white box-shadow" ]
+                [ div [ class "navbar" ]
+                    [ ul [ class "nav navbar-nav navbar-nav-inline text-center pull-right m-r text-blue-hover" ]
+                        (List.append
+                            [ progressBar
+                            ]
+                            (audioControls model)
+                        )
                     ]
-                    (audioControls model)
-                )
+                ]
             ]
         ]
 
@@ -247,6 +248,7 @@ progressBar =
                         ]
                         [ text "25%" ]
                     ]
+                , span [ class "text-xs" ] [ text "0:01:23/1:02:30" ]
                 ]
             ]
         ]
@@ -255,15 +257,17 @@ progressBar =
 controlButton : Bool -> Msg -> String -> String -> Html Msg
 controlButton display msg label iconUtf8 =
     if display then
-        a
-            [ class "nav-link"
-            , onClick msg
-            ]
-            [ span [ class "nav-text" ]
-                [ i [ class "material-icons" ]
-                    [ text iconUtf8
+        li [ class "nav-item" ]
+            [ a
+                [ class "nav-link"
+                , onClick msg
+                ]
+                [ span [ class "nav-text" ]
+                    [ i [ class "material-icons" ]
+                        [ text iconUtf8
+                        ]
+                    , span [ class "text-xs" ] [ text label ]
                     ]
-                , span [ class "text-xs" ] [ text label ]
                 ]
             ]
     else

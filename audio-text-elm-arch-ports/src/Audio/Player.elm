@@ -208,7 +208,7 @@ view model =
                 [ div [ class "navbar" ]
                     [ ul [ class "nav navbar-nav navbar-nav-inline text-center pull-right m-r text-blue-hover" ]
                         (List.append
-                            [ progressBar
+                            [ progressBar model
                             ]
                             (audioControls model)
                         )
@@ -233,8 +233,8 @@ audioControls model =
     ]
 
 
-progressBar : Html Msg
-progressBar =
+progressBar : Model -> Html Msg
+progressBar model =
     li [ class "nav-item" ]
         [ a [ class "nav-link" ]
             [ span [ class "nav-text" ]
@@ -248,10 +248,20 @@ progressBar =
                         ]
                         [ text "25%" ]
                     ]
-                , span [ class "text-xs" ] [ text "0:01:23/1:02:30" ]
+                , span [ class "text-xs" ] [ viewTimeInfo model ]
                 ]
             ]
         ]
+
+
+viewTimeInfo : Model -> Html Msg
+viewTimeInfo model =
+    case model.duration of
+        Just duration ->
+            text (toString model.currentTime ++ "/" ++ toString duration)
+
+        Nothing ->
+            text "-"
 
 
 controlButton : Bool -> Msg -> String -> String -> Html Msg

@@ -21,7 +21,7 @@ import Ports
 -- MODEL
 
 
-type alias Seconds =
+type alias Milliseconds =
     Int
 
 
@@ -39,11 +39,11 @@ type alias Model =
     { mediaUrl : String
     , mediaType : String
     , playing : Bool
-    , currentTime : Seconds
+    , currentTime : Milliseconds
     , playbackRate : Float
     , playbackStep : Float
     , defaultControls : Bool
-    , duration : Maybe Seconds
+    , duration : Maybe Milliseconds
     , controls : ControlsDisplay
     }
 
@@ -109,10 +109,10 @@ update msg model =
         TimeUpdate time ->
             -- we get the time in seconds, and we want it as
             -- milliseconds (Time.Time)
-            ( { model | currentTime = time * 1000 |> round }, Cmd.none )
+            ( { model | currentTime = ((time * 1000) |> round) }, Cmd.none )
 
         SetDuration time ->
-            ( { model | duration = Just (time * 1000 |> round) }, Cmd.none )
+            ( { model | duration = Just ((time * 1000) |> round) }, Cmd.none )
 
         SetPlaying ->
             ( { model | playing = True }, Cmd.none )
@@ -250,23 +250,32 @@ audioControls model =
 
 progressBar : Model -> Html Msg
 progressBar model =
-    li [ class "nav-item" ]
-        [ a [ class "nav-link" ]
-            [ span [ class "nav-text" ]
-                [ div
-                    [ class "progress nav-text"
-                    , style [ ( "width", "200px" ), ( "margin-bottom", "0" ) ]
-                    ]
+    let
+        progress =
+            case model.duration of
+                Just duration ->
+                    (toFloat (model.currentTime) * 100 / toFloat (duration)) |> round |> toString
+
+                Nothing ->
+                    "0"
+    in
+        li [ class "nav-item" ]
+            [ a [ class "nav-link" ]
+                [ span [ class "nav-text" ]
                     [ div
-                        [ class "progress-bar success nav-text"
-                        , style [ ( "width", "25%" ), ( "padding-top", "2px" ) ]
+                        [ class "progress nav-text"
+                        , style [ ( "width", "200px" ), ( "margin-bottom", "0" ) ]
                         ]
-                        [ text "25%" ]
+                        [ div
+                            [ class "progress-bar success nav-text"
+                            , style [ ( "width", progress ++ "%" ), ( "padding-top", "2px" ) ]
+                            ]
+                            [ text (progress ++ "%") ]
+                        ]
+                    , span [ class "text-xs" ] [ viewTimeInfo model ]
                     ]
-                , span [ class "text-xs" ] [ viewTimeInfo model ]
                 ]
             ]
-        ]
 
 
 viewTimeInfo : Model -> Html Msg
@@ -279,7 +288,7 @@ viewTimeInfo model =
             text "-"
 
 
-formatTimeInfo : Seconds -> String
+formatTimeInfo : Milliseconds -> String
 formatTimeInfo timestamp =
     let
         date =

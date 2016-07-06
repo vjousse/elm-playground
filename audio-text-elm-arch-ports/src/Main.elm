@@ -3,6 +3,7 @@ port module Main exposing (..)
 import Html exposing (div, h1, text, Html)
 import Html.App as App
 import Audio.Player exposing (Msg(..))
+import Audio.View
 import Debug
 import Keyboard
 import Char
@@ -112,7 +113,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ App.map MsgAudioPlayer (Audio.Player.view model.audioPlayer)
+        [ App.map MsgAudioPlayer (Audio.View.view model.audioPlayer)
         ]
 
 

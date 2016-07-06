@@ -260,8 +260,8 @@ progressBar model =
                     "0"
     in
         li [ class "nav-item" ]
-            [ a [ class "nav-link" ]
-                [ span [ class "nav-text" ]
+            [ span [ class "nav-text" ]
+                [ a [ class "nav-link" ]
                     [ div
                         [ class "progress nav-text"
                         , style [ ( "width", "200px" ), ( "margin-bottom", "0" ) ]
@@ -272,8 +272,8 @@ progressBar model =
                             ]
                             [ text (progress ++ "%") ]
                         ]
-                    , span [ class "text-xs" ] [ viewTimeInfo model ]
                     ]
+                , span [ class "text-xs" ] [ viewTimeInfo model ]
                 ]
             ]
 

@@ -1,15 +1,28 @@
 module Audio.Player exposing (Model, Msg(..), init, update, view, subscriptions)
 
+-- Elm modules
+
+import ISO8601
+import Debug
 import Html exposing (a, audio, button, div, h1, h2, i, li, span, text, ul, Attribute, Html)
 import Html.Attributes exposing (class, controls, href, id, type', src, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Json exposing ((:=))
 import List
-import Debug
+import String
+import Time exposing (Time)
+
+
+-- Project modules
+
 import Ports
 
 
 -- MODEL
+
+
+type alias Seconds =
+    Int
 
 
 type alias ControlsDisplay =
@@ -26,11 +39,11 @@ type alias Model =
     { mediaUrl : String
     , mediaType : String
     , playing : Bool
-    , currentTime : Float
+    , currentTime : Seconds
     , playbackRate : Float
     , playbackStep : Float
     , defaultControls : Bool
-    , duration : Maybe Float
+    , duration : Maybe Seconds
     , controls : ControlsDisplay
     }
 
@@ -94,10 +107,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case Debug.log ("[Audio.Player] " ++ toString msg) msg of
         TimeUpdate time ->
-            ( { model | currentTime = time }, Cmd.none )
+            -- we get the time in seconds, and we want it as
+            -- milliseconds (Time.Time)
+            ( { model | currentTime = time * 1000 |> round }, Cmd.none )
 
         SetDuration time ->
-            ( { model | duration = Just time }, Cmd.none )
+            ( { model | duration = Just (time * 1000 |> round) }, Cmd.none )
 
         SetPlaying ->
             ( { model | playing = True }, Cmd.none )
@@ -258,10 +273,19 @@ viewTimeInfo : Model -> Html Msg
 viewTimeInfo model =
     case model.duration of
         Just duration ->
-            text (toString model.currentTime ++ "/" ++ toString duration)
+            text (formatTimeInfo model.currentTime ++ "/" ++ formatTimeInfo duration)
 
         Nothing ->
             text "-"
+
+
+formatTimeInfo : Seconds -> String
+formatTimeInfo timestamp =
+    let
+        date =
+            timestamp |> ISO8601.fromTime
+    in
+        (date.hour |> toString |> String.padLeft 2 '0') ++ ":" ++ (date.minute |> toString |> String.padLeft 2 '0') ++ ":" ++ (date.second |> toString |> String.padLeft 2 '0')
 
 
 controlButton : Bool -> Msg -> String -> String -> Html Msg
